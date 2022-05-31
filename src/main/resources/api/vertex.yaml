@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: Vertex Rest Composed Api doc
+  version: 1.0.0
+  description: Vertex Rest Composed Api doc
+servers:
+  - url: 'localhost:8082'
+tags:
+  - name: Payments
+paths:
+  /payments:
+    get:
+      tags:
+        - Payments
+      description: fetches the active payments
+      operationId: fetchPayments
+      responses:
+        '200':
+          description: Payments Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentDTO'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Endpoint not found.
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+    post:
+      tags:
+        - Payments
+      summary: Add a sigular Payment
+      requestBody:
+        description: Body containing PaymentDTO to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDTO'
+      responses:
+        '200':
+          description: Added PaymentDTO response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDTO'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Endpoint not found.
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+components:
+  responses:
+    NotFound:
+      description: The specified resource was not found
+    Unauthorized:
+      description: Authorization information is missing or invalid
+    UnexpectedError:
+      description: Unexpected Error
+      content:
+        '*/*':
+          schema:
+            type: string
+            description: Error message
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        '*/*':
+          schema:
+            type: string
+            description: Internal Server Error
+  schemas:
+    PaymentDTO:
+      type: object
+      description: Payments object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          minimum: 0
+        currency:
+          $ref: '#/components/schemas/EnumCurrency'
+        type:
+          $ref: '#/components/schemas/EnumPaymentType'
+        debtorIban:
+          type: string
+        creditorIban:
+          type: string
+        details:
+          type: string
+        bicCode:
+          type: string
+    EnumPaymentType:
+      type: string
+      enum:
+        - TYPE1
+        - TYPE2
+        - TYPE3
+    EnumCurrency:
+      type: string
+      enum:
+        - EUR
+        - USD
+
+          
